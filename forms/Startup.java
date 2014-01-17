@@ -1,6 +1,11 @@
+package Evaluation1616.forms;
+
+import javax.swing.*;
+import java.lang.Thread;
+
 public class Startup extends JFrame
 {
-    sleepSeconds = 2;
+    int sleepSeconds = 2;
     public Startup()
     {
         setTitle("Evaluation 1616");
@@ -9,7 +14,12 @@ public class Startup extends JFrame
         setLocationRelativeTo(null);
         setUndecorated(true);
         setVisible(true);
-        Thread.sleep(sleepSeconds*1000);
+        try{
+            Thread.sleep(sleepSeconds*1000);
+        } catch (InterruptedException e)
+        {
+            System.err.println("InterruptedException: " + e.getMessage());
+        }
         setVisible(false);
         dispose();
     }
