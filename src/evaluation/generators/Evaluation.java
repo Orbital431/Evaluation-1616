@@ -8,6 +8,8 @@ public class Evaluation {
   
     referencing BUPERSINST 1610.10C for all instructions on correct procedure to produce evaluations
     pg 1-1 to 
+
+	//test1233test
   */
 
   private String name, rate, desig, ssn;                                    //block 1-3 (ssn excluded)
