@@ -49,4 +49,18 @@ public class Evaluation {
   public Evaluation()
   {
   }
+  
+  public boolean readTemplate()
+  {
+	  return false;
+  }
+  public boolean saveEvaluation()
+  {
+	  return false;
+  }
+  public boolean writeEvaluation()
+  {
+	  return false;
+  }
+  
 } 
