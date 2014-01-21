@@ -20,7 +20,8 @@ public class Driver extends JFrame
     public Driver()
     {
     	new Startup();
-    	new PDFGenerator();
+    	
+//    	new PDFGenerator();
     }
 
     public static void main(String args[])

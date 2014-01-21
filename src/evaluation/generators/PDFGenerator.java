@@ -2,9 +2,16 @@ package evaluation.generators;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
+@SuppressWarnings("unused")
 public class PDFGenerator {
 	
 	  private String name, rate, desig, ssn;                                    //block 1-3 (ssn excluded)
@@ -42,21 +49,92 @@ public class PDFGenerator {
 	  private Boolean retention;
 	  private double summary_group_average;
 	  
-	  private PDDocument document;
+	  private static PDDocument _pdfDocument;
 	
 	  public PDFGenerator()
 	  {
 		  try {
-			document = new PDDocument();
-			document.load("template.pdf");
+			_pdfDocument = PDDocument.load("template.pdf");
+			
+		    printFields();
+		    
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	  }
 	  
-	  public boolean loadTemplate()
+	  public static void setField(String name, String value ) throws IOException {
+	      PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
+	      PDAcroForm acroForm = docCatalog.getAcroForm();
+	      PDField field = acroForm.getField( name );
+	      if( field != null ) {
+	          field.setValue(value);
+	      }
+	      else {
+	          System.err.println( "No field found with name:" + name );
+	      }
+	  }
+	  @SuppressWarnings("rawtypes")
+	  public static void printFields() throws IOException {
+	      PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
+	      PDAcroForm acroForm = docCatalog.getAcroForm();
+	      List fields = acroForm.getFields();
+	      Iterator fieldsIter = fields.iterator();
+	 
+	      System.out.println(new Integer(fields.size()).toString() + " top-level fields were found on the form");
+	 
+	      while( fieldsIter.hasNext()) {
+	          PDField field = (PDField)fieldsIter.next();
+	             processField(field, "|--", field.getPartialName());
+	      }
+	  }
+	  @SuppressWarnings("rawtypes")
+	  private static void processField(PDField field, String sLevel, String sParent) throws IOException
 	  {
-		  return false;
+	      List kids = field.getKids();
+	      if(kids != null) {
+	          Iterator kidsIter = kids.iterator();
+	          if(!sParent.equals(field.getPartialName())) {
+	             sParent = sParent + "." + field.getPartialName();
+	          }
+	             
+	          System.out.println(sLevel + sParent);
+	             
+	          while(kidsIter.hasNext()) {
+	             Object pdfObj = kidsIter.next();
+	             if(pdfObj instanceof PDField) {
+	                 PDField kid = (PDField)pdfObj;
+	                 processField(kid, "|  " + sLevel, sParent);
+	             }
+	          }
+	       }
+	       else {
+	           String outputString = sLevel + sParent + "." + field.getPartialName() + ",  type=" + field.getClass().getName();
+	           System.out.println(outputString);
+	       }
+	  }
+	  
+	  private void saveEvaluation()
+	  {
+		  try 
+		  {
+			  _pdfDocument.save("test_output.pdf");
+		  } catch (COSVisitorException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		  }
+	  }
+	  private void closeEvaluation()
+	  {
+		  try {
+			_pdfDocument.close();
+			if (_pdfDocument != null) _pdfDocument.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	  }
 }
