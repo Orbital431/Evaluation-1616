@@ -1,7 +1,5 @@
 package evaluation.generators;
 
-import java.util.Date;
-
 public class Evaluation {
 
   /*  EVALUATION
