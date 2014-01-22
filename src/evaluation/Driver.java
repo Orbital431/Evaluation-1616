@@ -10,7 +10,7 @@ public class Driver extends JFrame
 
     public Driver()
     {
-    	new Startup();
+//    	new Startup();
     	new EvaluationExplorer();
 //    	new PDFGenerator();
     }
