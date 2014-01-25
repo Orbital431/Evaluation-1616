@@ -2,6 +2,8 @@ package evaluation.forms;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.sql.ResultSet;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -11,25 +13,45 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import evaluation.database.EvaluationDatabase;
+
 @SuppressWarnings("serial")
 public class EvaluationExplorer extends JFrame {
 
-	File _currentCollection;
-	File _targetSave;
+	private EvaluationDatabase _currentCollection;
+	
+	private static String _driver = "org.sqlite.JDBC";
+	private static String _url = "jdbc:sqlite:src/evaluation/database/storage/";
+	private static String user, pass;
 	
 	public EvaluationExplorer()
 	{
+		user = "orbital431";
+		pass = "arrigato";
+		
+		String db_file = "test123.db";
+		
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
 		setTitle("Evaluation 1616");
 		buildMenu();
 		buildFrames();
+		
+		_currentCollection = new EvaluationDatabase(_driver, _url + db_file, user, pass);
+		
+		ResultSet r = _currentCollection.getTables();
+		while (r.next())
+		{
+			
+		}
+		
 		setVisible(true);
 	}
     
 	/**
 	 * Build menu items for Explorer frame
+	 * 		Menu bar: basic menu bar w/ items
 	 */
 	private void buildMenu()
 	{
@@ -60,7 +82,8 @@ public class EvaluationExplorer extends JFrame {
 		setJMenuBar(_menubar);
 	}
 	/**
-	 * Builds viewing panes for Explorer frame
+	 * Builds viewing panes for Explorer frame.
+	 * 	 Split frame: TOP explorer window  BOTTOM evaluation listing
 	 */
 	private void buildFrames()
 	{
