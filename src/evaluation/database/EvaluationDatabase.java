@@ -29,19 +29,24 @@ public class EvaluationDatabase {
 		}
 	}
 		
-	public ResultSet getTables()
+	public ResultSet getTables() throws SQLException
 	{
-		cmd = "SELECT name FROM sqlite_master WHERE type='table'";
-		try {
-			stmt.execute(cmd);
-			//return stmt.toString();
-			return rs = stmt.executeQuery(cmd);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		DatabaseMetaData md = c.getMetaData();
+		return rs = md.getTables(null, null, "%", null);
 	}
 		
+	public int createTable() throws SQLException
+	{
+		stmt = c.createStatement();
+		cmd = "CREATE TABLE EVALUATION " +
+				"(id INTEGER not NULL, " +
+				"name VARCHAR(255) not NULL, " +
+				"rate VARCHAR(7) not NULL, " +
+				"desig VARCHAR(7) NULL, " +
+				"ssn VARCHAR(11) not NULL , " +
+				"PRIMARY KEY (id) )";
+		return stmt.executeUpdate(cmd);
+	}
 }
 
 

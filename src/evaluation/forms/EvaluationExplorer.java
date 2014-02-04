@@ -3,6 +3,8 @@ package evaluation.forms;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -24,7 +26,7 @@ public class EvaluationExplorer extends JFrame {
 	private static String _url = "jdbc:sqlite:src/evaluation/database/storage/";
 	private static String user, pass;
 	
-	public EvaluationExplorer()
+	public EvaluationExplorer() throws SQLException
 	{
 		user = "orbital431";
 		pass = "arrigato";
@@ -40,12 +42,20 @@ public class EvaluationExplorer extends JFrame {
 		
 		_currentCollection = new EvaluationDatabase(_driver, _url + db_file, user, pass);
 		
-		ResultSet r = _currentCollection.getTables();
-		while (r.next())
-		{
-			
+		//TESTING
+		ResultSet rs = _currentCollection.getTables();
+		
+		if (!rs.next()) {
+			  System.out.println("No Active Tables Found. Must Create new table.");
+			  if (_currentCollection.createTable() == 0) System.out.println("Create Statement complete.");
 		}
 		
+		rs = _currentCollection.getTables();
+		while (rs.next()) {
+			  System.out.println(rs.getString(3));
+		}
+		
+		//END TESTING
 		setVisible(true);
 	}
     
